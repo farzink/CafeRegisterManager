@@ -7,7 +7,9 @@ module.exports = app => {
         validate: () => {
             return [
                 check('name').exists().withMessage("name can not be empty"),
-                check('description').exists().withMessage("description can not be empty")
+                check('description').exists().withMessage("description can not be empty"),
+                check('code').exists().withMessage("code can not be empty"),
+                check('color').exists().withMessage("color can not be empty")
             ]
         },
         response: (req, res) => {
