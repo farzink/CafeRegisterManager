@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const Products = sequelize.define("Products", {
+    const Items = sequelize.define("Items", {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -19,39 +19,26 @@ module.exports = (sequelize, DataTypes) => {
                 notEmpty: false
             }
         },
-        condition: {
-            type: DataTypes.BOOLEAN,
-            allowNull: true,
-            validate: {
-                notEmpty: true
-            }
-        },
         description: {
             type: DataTypes.STRING,
             allowNull: true,
             defaultValue: ""
         },
-        available: {
+        isAvailable: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: true
         },
-        nov: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            defaultValue: 0
+        code: {
+            type: DataTypes.STRING,
+            allowNull: true,
         }
     });
 
 
-    Products.associate = (models) => {
-
-
-        Products.belongsTo(models.Profiles)
-        Products.belongsTo(models.Categories)
+    Items.associate = (models) => {
+        Items.belongsTo(models.Categories)
     };
 
-
-
-    return Products;
+    return Items;
 };

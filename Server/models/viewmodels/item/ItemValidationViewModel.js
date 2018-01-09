@@ -7,9 +7,10 @@ module.exports = app => {
         validate: () => {
             return [
                 check('name').exists().withMessage("Name of product can not be empty"),
-                check('description').exists().withMessage("description can not be empty"),
-                check('condition').exists().withMessage("Condition of product cannot be empty"),
-                check('categoryId').exists().withMessage("Category of product cannot be empty"),
+                check('description').exists().withMessage("Description can not be empty"),
+                check('price').exists().withMessage("Price of product cannot be empty"),
+                check('category_id').exists().withMessage("Category of product cannot be empty"),
+                check('code').exists().withMessage("Code of product cannot be empty"),
             ]
         },
         response: (req, res) => {

@@ -20,28 +20,7 @@ module.exports = app => {
             Sequelize,
             models: {}
         };
-        // const sequelize = new Sequelize('database', 'username', 'password', {
-        //     host: 'localhost',
-        //     dialect: 'sqlite',
 
-        //     pool: {
-        //         max: 5,
-        //         min: 0,
-        //         acquire: 30000,
-        //         idle: 10000
-        //     },
-
-        //     // SQLite only
-        //     storage: 'path/to/database.sqlite'
-        // });
-        // const User = sequelize.define('user', {
-        //     firstName: {
-        //         type: Sequelize.STRING
-        //     },
-        //     lastName: {
-        //         type: Sequelize.STRING
-        //     }
-        // });
 
         const dir = path.join(__dirname, "../../models/db/sql");
         fs.readdirSync(dir).forEach(file => {

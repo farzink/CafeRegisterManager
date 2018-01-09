@@ -16,13 +16,21 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true,
             defaultValue: ""
+        },
+        code: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        color: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            defaultValue: "#fff"
         }
     });
 
 
-
     Categories.associate = (models) => {
-        Categories.hasMany(models.Products);
+        Categories.hasMany(models.Items);
     };
 
 
