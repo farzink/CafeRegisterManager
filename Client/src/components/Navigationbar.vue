@@ -25,6 +25,9 @@
           <a class="dropdown-item" href="#">Something else here</a>
         </div>
       </li>
+      <li class="nav-item">
+        <router-link class="nav-link" :to="'/category'">Category <span class="sr-only">(current)</span></router-link>
+      </li>
       <li class="nav-item" v-if="signedin">
         <router-link class="nav-link" :to="'/manage/products'">Manage Products</router-link>                
       </li>

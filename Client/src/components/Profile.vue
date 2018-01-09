@@ -124,55 +124,55 @@
 </template>
 
 <script>
-import { maxLength } from 'vuelidate/lib/validators'
+import { maxLength } from "vuelidate/lib/validators";
 export default {
-  name: 'Profile',
-  data () {
-    return {        
-        firstname: '',
-        lastname: '',
-        email: '',
-        street: '',
-        houseno: '',
-        state: '',
-        city: '',
-        postalCode: '',
-        phone: ''
-    }
+  name: "Profile",
+  data() {
+    return {
+      firstname: "",
+      lastname: "",
+      email: "",
+      street: "",
+      houseno: "",
+      state: "",
+      city: "",
+      postalCode: "",
+      phone: ""
+    };
   },
-  validations :{
-    
-    firstname: {      
+  validations: {
+    firstname: {
       maxLength: maxLength(40)
     },
-    lastname: {      
+    lastname: {
       maxLength: maxLength(40)
-    },    
-    street: {      
+    },
+    street: {
       maxLength: maxLength(100)
     },
-    houseno: {      
+    houseno: {
       maxLength: maxLength(10)
     },
-    state: {      
+    state: {
       maxLength: maxLength(20)
     },
-    city: {      
+    city: {
       maxLength: maxLength(20)
     },
-    postalcode: {      
+    postalcode: {
       maxLength: maxLength(20)
     },
-    phone: {      
+    phone: {
       maxLength: maxLength(20)
     }
   },
-  methods: {    
-    update: function() {     
-      if(!this.$v.$invalid){
+  methods: {
+    update: function() {
+      if (!this.$v.$invalid) {
         let that = this;
-        this.axios.defaults.headers.common['Authorization'] = this.$auth.FAH();
-        this.axios.put(this.$gc.getBaseUrl("profiles"), {
+        this.axios.defaults.headers.common["Authorization"] = this.$auth.FAH();
+        this.axios
+          .put(this.$gc.getBaseUrl("profiles"), {
             firstname: this.firstname,
             lastname: this.lastname,
             street: this.street,
@@ -182,43 +182,41 @@ export default {
             postalcode: this.postalCode,
             phone: this.phone
           })
-          .then(function(data){
-            
-            if(data.status == 200) {                                        
-              that.$toasted.show('profile successfully updated.');              
+          .then(function(data) {
+            if (data.status == 200) {
+              that.$toasted.show("profile successfully updated.");
               that.$router.push("/");
+            } else {
+              that.$toasted.show("please try again!");
             }
-            else{              
-              that.$toasted.show('please try again!');              
-            }            
           })
-          .catch(function(error, data){              
-              that.$toasted.show('plase try again later');              
-            
-          })
+          .catch(function(error, data) {
+            that.$toasted.show("plase try again later");
+          });
       }
     }
   },
-  mounted: function() {    
-    let zoo=this;        
-          this.axios.get(this.$gc.getBaseUrl("profiles"), { headers: this.$auth.AH() })
-          .then(function(data){
-              console.log(data);
-            zoo.firstname = data.data.profile.firstname;
-            zoo.lastname = data.data.profile.lastname;
-            zoo.email = data.data.profile.email;
+  mounted: function() {
+    let zoo = this;
+    this.axios
+      .get(this.$gc.getBaseUrl("profiles"), { headers: this.$auth.AH() })
+      .then(function(data) {
+        console.log(data);
+        zoo.firstname = data.data.profile.firstname;
+        zoo.lastname = data.data.profile.lastname;
+        zoo.email = data.data.profile.email;
         zoo.street = data.data.profile.street;
         zoo.houseno = data.data.profile.houseno;
         zoo.state = data.data.profile.state;
         zoo.city = data.data.profile.city;
         zoo.postalCode = data.data.profile.postalcode;
         zoo.phone = data.data.profile.phone;
-          })
-          .catch(function(error){                         
-            console.log(error);
-          })
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
-}
+};
 </script>
 
 <!-- Add 'scoped' attribute to limit CSS to this component only -->

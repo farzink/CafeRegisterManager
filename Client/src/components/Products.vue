@@ -4,26 +4,20 @@
   <div class="card-body">
     <h4 class="card-title">Manage Products</h4>
     <h6 class="card-subtitle mb-4 text-muted "></h6>
-    
+  <div class="justify-content-center">
+        <div class="card m-5 p-2">
+    <div class="card-body">
+      <h4 class="card-title">Manage</h4>
+      <h6 class="card-subtitle mb-4 text-muted ">you can add/edit your product(s)</h6>
 
-
-
-
-
-<div class="justify-content-center">
-			<div class="card m-5 p-2">
-  <div class="card-body">
-    <h4 class="card-title">Manage</h4>
-    <h6 class="card-subtitle mb-4 text-muted ">you can add/edit your product(s)</h6>
-
-      <div class="row">
-    <div class="col-sm-12 col-md-3">      
-      <router-link class="btn btn-secondary text-white" :to="'/manage/products/add'">Add new product</router-link>            
-    </div>         
-    <div class="col-sm-12 col-md-3">      
-      <router-link class="btn btn-secondary text-white" :to="'/manage/products/index'">Edit existing product</router-link>                  
-    </div>         
-  </div>
+        <div class="row">
+      <div class="col-sm-12 col-md-3">      
+        <router-link class="btn btn-secondary text-white" :to="'/manage/products/add'">Add new product</router-link>            
+      </div>         
+      <div class="col-sm-12 col-md-3">      
+        <router-link class="btn btn-secondary text-white" :to="'/manage/products/index'">Edit existing product</router-link>                  
+      </div>         
+    </div>
 
 </div>
 		</div>
@@ -50,14 +44,6 @@
 		</div>
     </div>
 
-
-
-
-
-
-
-
-
   <router-link class="btn btn-danger btn-round fa fa-close" style="position:absolute; top:10px; right: 10px; color: white" :to="'/'"></router-link>      
 </div>
 		</div>
@@ -65,53 +51,55 @@
 </template>
 
 <script>
-import { required, minLength, maxLength, between, email } from 'vuelidate/lib/validators'
+import {
+  required,
+  minLength,
+  maxLength,
+  between,
+  email
+} from "vuelidate/lib/validators";
 export default {
-  name: 'Products',
-  data () {
-    return {        
-        
-    }
+  name: "Products",
+  data() {
+    return {};
   },
   methods: {
-    test: function(){
-      this.$toasted.show('rocket science');
+    test: function() {
+      this.$toasted.show("rocket science");
     },
-    conditioner: function(condition){
-      if(condition === 'new'){
+    conditioner: function(condition) {
+      if (condition === "new") {
         this.isNew = true;
         this.isUsed = false;
-      }else{
+      } else {
         this.isNew = false;
         this.isUsed = true;
       }
     },
-    login: function() {     
-      if(!this.$v.$invalid){
-        let gooz=this;        
-          this.axios.post(this.$gc.getBaseUrl("authentication/token"), {
+    login: function() {
+      if (!this.$v.$invalid) {
+        let gooz = this;
+        this.axios
+          .post(this.$gc.getBaseUrl("authentication/token"), {
             email: gooz.email,
             password: gooz.password
           })
-          .then(function(data){
-            
-            if(data.data.isSuccessfull == true) {                          
+          .then(function(data) {
+            if (data.data.isSuccessfull == true) {
               gooz.$auth.createToken(data.data.token);
-              gooz.$toasted.show('successful login');              
+              gooz.$toasted.show("successful login");
               gooz.$router.push("/");
+            } else {
+              gooz.$toasted.show("wrong credential, please try again!");
             }
-            else{              
-              gooz.$toasted.show('wrong credential, please try again!');              
-            }            
           })
-          .catch(function(error, data){              
-              gooz.$toasted.show('plase try again later');              
-            
-          })
+          .catch(function(error, data) {
+            gooz.$toasted.show("plase try again later");
+          });
       }
     }
   }
-}
+};
 </script>
 
 <!-- Add 'scoped' attribute to limit CSS to this component only -->

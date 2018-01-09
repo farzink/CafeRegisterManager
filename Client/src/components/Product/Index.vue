@@ -30,29 +30,30 @@ import { src } from 'semver';
 
 <script>
 export default {
-  name: 'Index',  
-  data () {
-    return { 
-        products: []    
-    }    
-  },  
+  name: "Index",
+  data() {
+    return {
+      products: []
+    };
+  },
   methods: {
-    getImageAddress: function(path){
-      
-      return this.$gc.getBaseUrl(path)
+    getImageAddress: function(path) {
+      return this.$gc.getBaseUrl(path);
     }
   },
-  beforeMount: function() {    
-    let that=this;        
-          this.axios.get(this.$gc.getBaseUrl("products/profile/repo/items"), { headers: this.$auth.AH() })
-          .then(function(data){              
-              that.products = data.data.products;          
-          })
-          .catch(function(error){                         
-            console.log(error);
-          })    
+  beforeMount: function() {
+    let that = this;
+    this.axios
+      .get(this.$gc.getBaseUrl("items"), { headers: this.$auth.AH() })
+      .then(function(data) {
+        console.log(data.data);
+        that.products = data.data.items;
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
-}
+};
 </script>
 
 <!-- Add 'scoped' attribute to limit CSS to this component only -->
