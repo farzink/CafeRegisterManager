@@ -1,13 +1,69 @@
 <template>  
   <div class="container border">
-    <form class="p-4 was-validated">
-      <div class="form-group">
-        <label for="exampleInputEmail1">Email address</label>
-        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-        <div class="invalid-feedback">
-          Please choose a username.
+    <BlockUI v-if="isLoading" message="Please Wait" :html="html"></BlockUI>
+    <div class="row m-3">
+      <h3>
+        Add a New Product
+      </h3>      
+    </div>
+    <form class="p-4">
+      <div class="form-group row">
+        <label for="productName" class="col-2 col-form-label text-right">Name</label>
+        <div class="col-10">
+          <input class="form-control" type="text" placeholder="Name" id="productName" v-model="product.name">
+           <small class="form-text text-danger" v-if="!$v.product.name.required && $v.product.name.$dirty">Name is required</small>  
+           <small class="form-text text-danger" v-if="!$v.product.name.maxLength ">Name can not be longer than 40 characters</small>          
         </div>
       </div>
+      <div class="form-group row">
+        <label for="productPrice" class="col-2 col-form-label text-right">Price</label>
+        <div class="col-10">
+          <input class="form-control" type="number" placeholder="Price" id="productPrice" v-model="product.price">
+          <small class="form-text text-danger" v-if="!$v.product.price.required && $v.product.price.$dirty">Price is required</small>          
+          <small class="form-text text-danger" v-if="!$v.product.price.between">Price should be between 0 and 99999999</small>                    
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="productCategory" class="col-2 col-form-label text-right">Category</label>
+        <div class="col-10">
+          <b-form-select id="productCategory"
+                        :options="categoriesOptions"
+                        required
+                        v-model="selectedCategory">
+          </b-form-select>
+        </div>
+      </div> 
+      <div class="form-group row">
+        <label for="productCode" class="col-2 col-form-label text-right">Code</label>
+        <div class="col-10">
+          <input class="form-control" type="text" placeholder="Code" id="productCode" v-model="product.code">          
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="productDescription" class="col-2 col-form-label text-right">Description</label>
+        <div class="col-10">
+          <textarea class="form-control" type="text" placeholder="Description" id="productDescription" rows="3" v-model="product.description"></textarea>
+          <small class="form-text text-danger" v-if="!$v.product.description.required && $v.product.description.$dirty">Description is required</small>  
+           <small class="form-text text-danger" v-if="!$v.product.description.maxLength ">Description can not be longer than 1000 characters</small>  
+        </div>
+      </div> 
+      <div class="form-group row">
+        <label for="productAvailability" class="col-2 col-form-label text-right">&nbsp;</label>
+        <div class="col-10">
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" v-model="product.isAvailable" value="">
+              is this item Available?
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="productDescription" class="col-2 col-form-label text-right">&nbsp;</label>
+        <div class="col-10">
+          <input type="button" class="btn btn-primary float-right"  style="width: 8rem" @click="add" v-bind:class="{disabled: $v.$invalid}" value="Add">
+        </div>
+      </div> 
     </form>
   </div>
 </template>
@@ -17,76 +73,69 @@ import {
   required,
   minLength,
   maxLength,
-  between,
-  email
+  between
 } from "vuelidate/lib/validators";
 export default {
-  name: "Add",  
+  name: "Add",
   data() {
     return {
-      name: "",      
-      category: "",
-      description: "",
-      code: "",
-      isAvailable: false,
-      price: 0,      
+      product: {
+        isAvailable: true
+      },
       categories: [],
       selectedCategory: null,
-      categoriesOptions: [],           
-     
+      categoriesOptions: [],
+      isLoading: false,
+      html: '<img src="static/puff.svg" />'
     };
   },
   validations: {
-    name: {
-      required,
-      maxLength: maxLength(40)
-    },
-    description: {
-      required,
-      maxLength: maxLength(1000)
-    },
-    price: {
-      required,
-      between: between(0, 99999999)
+    product: {
+      name: {
+        required,
+        maxLength: maxLength(40)
+      },
+      description: {
+        required,
+        maxLength: maxLength(1000)
+      },
+      price: {
+        required,
+        between: between(0, 99999999)
+      }
     }
   },
-  methods: {    
-    conditioner: function(condition) {
-      if (condition === "new") {
-        this.isNew = true;
-        this.isUsed = false;
-      } else {
-        this.isNew = false;
-        this.isUsed = true;
-      }
-    },
+  methods: {
     add: function() {
-      this.ex = "busted";
-      let that = this;
-      if (!this.$v.invalid) {
-        this.axios.defaults.headers.common["Authorization"] = this.$auth.FAH();
-        console.log(this.price);
-        this.axios
-          .post(this.$gc.getBaseUrl("products"), {
-            name: this.name,
-            price: this.price,
-            condition: this.isNew,
-            categoryId: this.selectedCategory,
-            description: this.description
-          })
-          .then(function(data) {
-            if (data.status == 201) {
-              that.$toasted.show("product successfully created.");
-              that.$router.push("/manage/products");
-            } else {
-              that.$toasted.show("please try again!");
-            }
-          })
-          .catch(function(error, data) {
-            that.$toasted.show("plase try again later");
-          });
+      if (this.selectedCategory !== null) {
+        this.product.categoryId = this.selectedCategory;
+      } else {
+        this.$toasted.show("You need to select a category");
+        return;
       }
-    },    
+      let that = this;
+      this.axios.defaults.headers.common["Authorization"] = this.$auth.FAH();
+      console.log(this.product);
+      this.axios
+        .post(this.$gc.getBaseUrl("items"), {
+          name: this.product.name,
+          price: parseFloat(this.product.price),          
+          category_id: this.product.categoryId,
+          description: this.product.description,
+          code: this.product.code
+        })
+        .then(function(data) {
+          if (data.status == 201) {
+            that.$toasted.show("product successfully created.");
+            that.$router.push("/manage/products");
+          } else {
+            that.$toasted.show("please try again!");
+          }
+        })
+        .catch(function(error, data) {
+          that.$toasted.show("plase try again later");
+        });
+    },
     refreshCategories() {
       this.isLoading = true;
       let self = this;
@@ -114,7 +163,7 @@ export default {
       });
     }
   },
-  mounted: function() {    
+  mounted: function() {
     let those = this;
     var localCats = this.$gc.getItemByKey("categories");
     if (localCats !== null) {
@@ -130,7 +179,5 @@ export default {
 
 <!-- Add 'scoped' attribute to limit CSS to this component only -->
 <style scoped>
-  .container {
-    margin-top: 64px;
-  }
+
 </style>

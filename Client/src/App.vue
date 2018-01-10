@@ -39,4 +39,8 @@ export default {
 .subparent {
   width: 60rem;
 }
+
+.container {
+  margin-top: 64px;
+}
 </style>
