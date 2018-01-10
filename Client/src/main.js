@@ -6,6 +6,8 @@ import VueAxios from 'vue-axios'
 import BootstrapVue from 'bootstrap-vue'
 import Toasted from 'vue-toasted'
 import Vuelidate from 'vuelidate'
+import BlockUI from 'vue-blockui' 
+
 
 //import 'popper.js/dist/popper.js'
 //import 'jquery/dist/jquery.js'
@@ -27,11 +29,12 @@ import { globals } from 'eslint-config-standard';
 // import './assets/css/font-awesome-ie7.css'
 
 import authInspector from '@/plugins/authInspector'
+import LSManager from '@/plugins/LSManager'
 import globalConfiguration from '@/plugins/globalConfiguration'
 import * as VueGoogleMaps from 'vue2-google-maps'
 
-
-
+Vue.use(LSManager)
+Vue.use(BlockUI)
 Vue.use(VueAxios, axios)
 Vue.use(Vuelidate)
 Vue.use(Toasted, {

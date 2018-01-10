@@ -11,6 +11,7 @@ module.exports = app => {
                 check('price').exists().withMessage("Price of product cannot be empty"),
                 check('category_id').exists().withMessage("Category of product cannot be empty"),
                 check('code').exists().withMessage("Code of product cannot be empty"),
+                check('isAvailable').exists().withMessage("isavailable of product cannot be empty"),
             ]
         },
         response: (req, res) => {
