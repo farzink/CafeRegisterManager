@@ -100,7 +100,6 @@
                 </form>
             </div>            
         </b-modal>
-
     </div>
 </template>
 
@@ -146,7 +145,8 @@ export default {
           self.isLoading = false;
         });
     },
-    deleteCategory(cat) {
+    deleteCategory(cat) {     
+      this.testLSM();
       this.categoryToDelete = cat;
       this.$refs.confirmationModal.show();
     },
@@ -247,6 +247,10 @@ export default {
           console.log(error);
           self.isLoading = false;
         });
+    },
+    testLSM() {
+      this.$lsm.set(this.categories, 'categories');
+      this.$lsm.save();
     }
   },
   mounted: function() {

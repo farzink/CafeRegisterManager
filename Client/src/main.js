@@ -29,10 +29,11 @@ import { globals } from 'eslint-config-standard';
 // import './assets/css/font-awesome-ie7.css'
 
 import authInspector from '@/plugins/authInspector'
+import LSManager from '@/plugins/LSManager'
 import globalConfiguration from '@/plugins/globalConfiguration'
 import * as VueGoogleMaps from 'vue2-google-maps'
 
-
+Vue.use(LSManager)
 Vue.use(BlockUI)
 Vue.use(VueAxios, axios)
 Vue.use(Vuelidate)
