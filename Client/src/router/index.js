@@ -11,111 +11,102 @@ import Products from "@/components/Products";
 import Profile from "@/components/Profile";
 import Search from "@/components/Search";
 import IndexCategory from "@/components/Category/Index";
-import EditCategory from "@/components/Category/edit";
 
 Vue.use(Router);
 
 let router = new Router({
-  routes: [
-    {
-      path: "/",
-      name: "Home",
-      component: Home
-    },
-    {
-      path: "/login",
-      name: "Login",
-      component: Login
-    },
-    {
-      path: "/register",
-      name: "Register",
-      component: Register
-    },
-    {
-      path: "/manage/products",
-      name: "Products",
-      component: Products,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: "/manage/products/add",
-      name: "AddProduct",
-      component: AddProduct,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: "/manage/products/edit/:id",
-      name: "EditProduct",
-      component: EditProduct,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: "/manage/products/index",
-      name: "IndexProduct",
-      component: IndexProduct,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: "/profile",
-      name: "Profile",
-      component: Profile,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: "/manage/products/statistics",
-      name: "Statistics",
-      component: Statistics,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: "/category",
-      name: "Categories",
-      component: IndexCategory,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: "/category/edit/:id",
-      name: "edit-category",
-      component: EditCategory,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: "/search",
-      name: "Search",
-      component: Search
-    }
-  ]
+    routes: [{
+            path: "/",
+            name: "Home",
+            component: Home
+        },
+        {
+            path: "/login",
+            name: "Login",
+            component: Login
+        },
+        {
+            path: "/register",
+            name: "Register",
+            component: Register
+        },
+        {
+            path: "/manage/products",
+            name: "Products",
+            component: Products,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: "/manage/products/add",
+            name: "AddProduct",
+            component: AddProduct,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: "/manage/products/edit/:id",
+            name: "EditProduct",
+            component: EditProduct,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: "/manage/products/index",
+            name: "IndexProduct",
+            component: IndexProduct,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: "/profile",
+            name: "Profile",
+            component: Profile,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: "/manage/products/statistics",
+            name: "Statistics",
+            component: Statistics,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: "/category",
+            name: "Categories",
+            component: IndexCategory,
+            meta: {
+                requiresAuth: true
+            }
+        },
+
+        {
+            path: "/search",
+            name: "Search",
+            component: Search
+        }
+    ]
 });
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!Vue.prototype.$auth.isSignedIn()) {
-      next({
-        path: "/login",
-        query: { redirect: to.fullPath }
-      });
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+        if (!Vue.prototype.$auth.isSignedIn()) {
+            next({
+                path: "/login",
+                query: { redirect: to.fullPath }
+            });
+        } else {
+            next();
+        }
     } else {
-      next();
+        next();
     }
-  } else {
-    next();
-  }
 });
 
 export default router;
