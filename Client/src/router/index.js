@@ -11,7 +11,6 @@ import Products from "@/components/Products";
 import Profile from "@/components/Profile";
 import Search from "@/components/Search";
 import IndexCategory from "@/components/Category/Index";
-import EditCategory from "@/components/Category/edit";
 
 Vue.use(Router);
 
@@ -87,15 +86,7 @@ let router = new Router({
       meta: {
         requiresAuth: true
       }
-    },
-    {
-      path: "/category/edit/:id",
-      name: "edit-category",
-      component: EditCategory,
-      meta: {
-        requiresAuth: true
-      }
-    },
+    },    
     {
       path: "/search",
       name: "Search",

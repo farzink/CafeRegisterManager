@@ -1,5 +1,6 @@
 <template>
     <div class="row justify-content-center parent">
+      <BlockUI v-if="isLoading" message="Please Wait" :html="html"></BlockUI>
         <div class="card m-5 p-2 subparent">
             <div class="card-body">
                 <h4 class="card-title d-4">List of Categoreis</h4>
@@ -16,9 +17,9 @@
                             <b-button v-b-tooltip.hover title="Edit this category" @click="editCategory(cat)" class="btn btn-outline-success float-right">Edit
                             </b-button>
                             <b-button v-bind:style="{'background-color': cat.color}" v-b-tooltip.hover title="Edit this category" class="btn rounded-circle">&nbsp;&nbsp;&nbsp;
-                            </b-button>
+                            </b-button>                            
                             <b-button style="position: absolute; top:10px; right: 10px" v-b-tooltip.hover title="Delete this category" @click="deleteCategory(cat)" class="btn btn-sm btn-outline-danger float-right fa fa-close">
-                            </b-button>
+                            </b-button>                            
                         </b-card>                        
                     <!-- </b-card-group> -->
                 </div>
@@ -36,9 +37,11 @@
                 <div class="text-center" style="position:absolute; top:10px; right: 55px; color: white">
                     <b-btn class="btn-secondary fa fa-plus" @click="createCategory" v-b-tooltip.hover title="Create new category"></b-btn>
                 </div>            
+                <div class="text-center hidden-sm-down" style="position:absolute; top:10px; right: 100px; color: white">
+                    <b-btn class="btn btn-info fa fa-refresh" @click="refreshCategories" v-b-tooltip.hover title="Refresh data from server"></b-btn>
+                </div>            
             </div>
 		</div>
-
         <b-modal id="confirmationModal"
                 centered 
                 hide-footer
@@ -109,18 +112,16 @@ export default {
     return {
       categories: [],
       categoryToDelete: {},
-      categoryToCreate: {
-        // name: "",
-        // description: "",
-        // code: "",
-        // color: ""
-      },
+      categoryToCreate: {},
       modalTitle: "",
-      modalMode: "create"
+      modalMode: "create",
+      isLoading: false,
+      html: '<img src="static/puff.svg" />'
     };
   },
   methods: {
     doDelete() {
+      this.isLoading = true;
       var self = this;
       var path = this.$gc.getBaseUrl("categories/" + this.categoryToDelete.id);
       this.axios
@@ -138,9 +139,11 @@ export default {
             );
           }
           self.$refs.confirmationModal.hide();
+          self.isLoading = false;
         })
         .catch(function(error) {
           console.log(error);
+          self.isLoading = false;
         });
     },
     deleteCategory(cat) {
@@ -154,6 +157,7 @@ export default {
       this.$refs.creationModal.show();
     },
     doCreateCategory() {
+      this.isLoading = true;
       var self = this;
       this.axios.defaults.headers.common["Authorization"] = this.$auth.FAH();
       this.axios
@@ -164,13 +168,14 @@ export default {
           color: this.categoryToCreate.color
         })
         .then(function(data) {
-          console.log(data);
           self.categories.push(data.data.result);
           self.$toasted.show("Category successfully created.");
           self.$refs.creationModal.hide();
+          self.isLoading = false;
         })
         .catch(function(error) {
           console.log(error);
+          self.isLoading = false;
         });
       this.categoryToCreate = {};
     },
@@ -187,6 +192,7 @@ export default {
       this.$refs.creationModal.show();
     },
     doEditCategory() {
+      this.isLoading = true;
       var self = this;
       this.axios.defaults.headers.common["Authorization"] = this.$auth.FAH();
       var path = this.$gc.getBaseUrl("categories/" + this.categoryToCreate.id);
@@ -198,42 +204,58 @@ export default {
           color: this.categoryToCreate.color
         })
         .then(function(data) {
-          console.log(data);
           var category = self.categories.find(
             e => e.id == data.data.category.id
           );
-          category.name = data.data.category.name;
-          category.color = data.data.category.color;
-          category.description = data.data.category.description;
-          category.code = data.data.category.code;
-
-          self.$toasted.show("Category successfully Updated.");
+          var index = self.categories.indexOf(category);
+          if (index !== -1) {
+            category.name = data.data.category.name;
+            category.color = data.data.category.color;
+            category.description = data.data.category.description;
+            category.code = data.data.category.code;
+            self.categories.splice(index, 1, category);
+            self.$gc.saveItemByKey(
+              "categories",
+              JSON.stringify(self.categories)
+            );
+            self.$toasted.show("Category successfully Updated.");
+          }          
           self.$refs.creationModal.hide();
+          self.isLoading = false;
         })
         .catch(function(error) {
           console.log(error);
+          self.isLoading = false;
         });
       this.categoryToCreate = {};
+    },
+    refreshCategories() {
+      this.isLoading = true;
+      let self = this;
+      this.axios
+        .get(this.$gc.getBaseUrl("categories"), { headers: this.$auth.AH() })
+        .then(function(data) {
+          self.$gc.saveItemByKey(
+            "categories",
+            JSON.stringify(data.data.categories)
+          );
+          self.categories = data.data.categories;
+          self.$toasted.show("Categories are up to date.");
+          self.isLoading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          self.isLoading = false;
+        });
     }
   },
   mounted: function() {
     let those = this;
     var localCats = this.$gc.getItemByKey("categories");
-    if (localCats.length > 0) {
+    if (localCats !== null) {
       this.categories = localCats;
     } else {
-      this.axios
-        .get(this.$gc.getBaseUrl("categories"), { headers: this.$auth.AH() })
-        .then(function(data) {
-          those.$gc.saveItemByKey(
-            "categories",
-            JSON.stringify(data.data.categories)
-          );
-          those.categories = data.data.categories;
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
+      this.refreshCategories();
     }
   },
   validations: {
@@ -250,6 +272,4 @@ export default {
   }
 };
 </script>
-<style scoped>
 
-</style>

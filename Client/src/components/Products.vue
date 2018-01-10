@@ -1,6 +1,6 @@
 <template>
-  <div class="row justify-content-center">
-			<div class="card m-5 p-2" style="width: 60rem;">
+  <div class="row justify-content-center parent">
+			<div class="card m-5 p-2 subparent" style="width: 60rem;">
   <div class="card-body">
     <h4 class="card-title">Manage Products</h4>
     <h6 class="card-subtitle mb-4 text-muted "></h6>
