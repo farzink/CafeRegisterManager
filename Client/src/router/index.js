@@ -95,18 +95,18 @@ let router = new Router({
   ]
 });
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!Vue.prototype.$auth.isSignedIn()) {
-      next({
-        path: "/login",
-        query: { redirect: to.fullPath }
-      });
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+        if (!Vue.prototype.$auth.isSignedIn()) {
+            next({
+                path: "/login",
+                query: { redirect: to.fullPath }
+            });
+        } else {
+            next();
+        }
     } else {
-      next();
+        next();
     }
-  } else {
-    next();
-  }
 });
 
 export default router;
