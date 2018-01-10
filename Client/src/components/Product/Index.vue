@@ -1,23 +1,37 @@
-import { src } from 'semver';
 <template>
-  <div class="row justify-content-center">
-    <div class="card m-5 p-2" style="width: 60rem;">
+  <!-- <div class="row justify-content-center parent">
+    <div class="card m-5 p-2 subparent" style="width: 60rem;">
       <div class="card-body">
       <h4 class="card-title">Manage Products</h4>
       <h6 class="card-subtitle mb-4 text-muted "></h6>
       <div class="row"> 
-        <div v-for="product in products" class="card p-4 m-3" v-bind:key="product.id" style="width: 25rem;">
-          <img class="card-img-top" :src="getImageAddress(product.image)"  alt="Card image cap" style="min-height: 250px; max-height: 250px">
+        <div v-for="product in products" class="card p-4 m-3" v-bind:key="product.id" style="width: 17rem;">    
           <div class="card-block">
             <h4 class="card-title">{{product.name}}</h4>
             <p class="card-text">{{product.description.slice(0, 100) + "..."}}</p>
-            <router-link class="btn btn btn-secondary rounded text-light float-right" :to="'/manage/products/edit/' + product.id">Edit</router-link>                
-    <!-- <a href="#" class="btn btn-primary text-light">Edit</a> -->
+            <router-link class="btn btn btn-secondary rounded text-light float-right" :to="'/manage/products/edit/' + product.id">Edit</router-link>                    
           </div>  
         </div>
       </div>
       <router-link class="btn btn-danger btn-round fa fa-close" style="position:absolute; top:10px; right: 10px; color: white" :to="'/manage/products'"></router-link>      
       </div>
+    </div>
+  </div> -->
+  <div class="container border">
+    <BlockUI v-if="isLoading" message="Please Wait" :html="html"></BlockUI>
+    <div class="row m-3">
+      <h3>
+        View/Edit/Delete items
+      </h3>      
+    </div>
+    <div class="row">
+      <div v-for="product in products" class="card p-4 m-3" v-bind:key="product.id" style="width: 20rem;">    
+          <div class="card-block">
+            <h4 class="card-title">{{product.name}}</h4>
+            <p class="card-text">{{product.description.slice(0, 100) + "..."}}</p>
+            <router-link class="btn btn btn-secondary rounded text-light float-right" :to="'/manage/products/edit/' + product.id">Edit</router-link>                    
+          </div>  
+        </div>
     </div>
   </div>
 </template>
@@ -30,10 +44,7 @@ export default {
       products: []
     };
   },
-  methods: {
-    getImageAddress: function(path) {
-      return this.$gc.getBaseUrl(path);
-    }
+  methods: {   
   },
   beforeMount: function() {
     let that = this;

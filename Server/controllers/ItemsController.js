@@ -46,7 +46,7 @@ module.exports = app => {
                         price: req.body.price,
                         category_id: req.body.category_id,
                         description: req.body.description,
-                        code: req.body.code
+                        code: req.body.code,                        
                     }, (result) => {
                         res.status(201).json({ result: result });
                     });
