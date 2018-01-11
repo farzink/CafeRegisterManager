@@ -16,7 +16,7 @@
                             <p class="card-text">{{cat.description}}</p>
                             <b-button v-b-tooltip.hover title="Edit this category" @click="editCategory(cat)" class="btn btn-outline-success float-right">Edit
                             </b-button>
-                            <b-button v-bind:style="{'background-color': cat.color}" v-b-tooltip.hover title="Edit this category" class="btn rounded-circle">&nbsp;&nbsp;&nbsp;
+                            <b-button v-bind:style="{'background-color': cat.color}" v-b-tooltip.hover title="Category Color" class="btn rounded-circle">&nbsp;&nbsp;&nbsp;
                             </b-button>                            
                             <b-button style="position: absolute; top:10px; right: 10px" v-b-tooltip.hover title="Delete this category" @click="deleteCategory(cat)" class="btn btn-sm btn-outline-danger float-right fa fa-close">
                             </b-button>                            
@@ -89,10 +89,11 @@
                         <label for="categoryColor" class="col-sm-3 col-form-label">Color</label>
                         <div class="col-sm-8">
                             <!-- <input class="form-control" id="categoryColor" placeholder="Color" v-model="categoryToCreate.color">                              -->
-                            <input class="rounded" type="color" id="categoryColor" value="#ff0000" style="width:85%; height: 40px;" v-model="categoryToCreate.color">
+                            <input class="form-control rounded" type="color" id="categoryColor" v-model="categoryToCreate.color">
                         </div>    
                         <br><br>
                     </div> 
+
                     
                     <b-button v-if="modalMode == 'create'" class="btn-block" v-bind:class="{disabled: $v.$invalid}" type="button" @click="doCreateCategory" variant="primary">Save</b-button>
                     <b-button v-if="modalMode == 'edit'" class="btn-block" v-bind:class="{disabled: $v.$invalid}" type="button" @click="doEditCategory" variant="primary">Save</b-button>
@@ -145,7 +146,7 @@ export default {
           self.isLoading = false;
         });
     },
-    deleteCategory(cat) {     
+    deleteCategory(cat) {
       this.testLSM();
       this.categoryToDelete = cat;
       this.$refs.confirmationModal.show();
@@ -157,6 +158,7 @@ export default {
       this.$refs.creationModal.show();
     },
     doCreateCategory() {
+      console.log(this.categoryToCreate.color === undefined);
       this.isLoading = true;
       var self = this;
       this.axios.defaults.headers.common["Authorization"] = this.$auth.FAH();
@@ -165,10 +167,11 @@ export default {
           name: this.categoryToCreate.name,
           description: this.categoryToCreate.description,
           code: this.categoryToCreate.code,
-          color: this.categoryToCreate.color
+          color: (this.categoryToCreate.color === undefined) ? '#ffffff' : this.categoryToCreate.color
         })
         .then(function(data) {
           self.categories.push(data.data.result);
+          self.$gc.saveItemByKey("categories", JSON.stringify(self.categories));
           self.$toasted.show("Category successfully created.");
           self.$refs.creationModal.hide();
           self.isLoading = false;
@@ -219,7 +222,7 @@ export default {
               JSON.stringify(self.categories)
             );
             self.$toasted.show("Category successfully Updated.");
-          }          
+          }
           self.$refs.creationModal.hide();
           self.isLoading = false;
         })
@@ -249,7 +252,7 @@ export default {
         });
     },
     testLSM() {
-      this.$lsm.set(this.categories, 'categories');
+      this.$lsm.set(this.categories, "categories");
       this.$lsm.save();
     }
   },

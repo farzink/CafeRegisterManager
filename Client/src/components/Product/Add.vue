@@ -122,7 +122,8 @@ export default {
           price: parseFloat(this.product.price),          
           category_id: this.product.categoryId,
           description: this.product.description,
-          code: this.product.code
+          code: this.product.code,
+          isAvailable: this.product.isAvailable
         })
         .then(function(data) {
           if (data.status == 201) {
