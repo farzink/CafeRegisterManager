@@ -29,6 +29,9 @@
     </header>
 
 
+    <button @click="p">press</button>
+
+
     
     
 
@@ -48,7 +51,7 @@ import { required } from 'vuelidate/lib/validators'
 export default {
   name: 'Home',
   data () {
-    return {
+    return {        
         categories: [],
         selectedCategory: -1,
         term: ""
@@ -60,6 +63,17 @@ export default {
     }
   },
   methods: {
+    p: function() {
+      this.$lsm.load();
+      var e = this.$lsm.models.CATEGORIES;      
+      //this.$lsm.set({id: 1, name: "c"}, e)
+      //this.$lsm.clear(e);
+      //this.$lsm.save()
+      //this.$lsm.update({id: 2, name: "na gholam"}, e)
+      this.$lsm.remove({id: 2, name: "na gholam"}, e)
+      //this.$lsm.save()
+      console.log(this.$lsm.get(e));
+    },
     search: function(){
       let those=this;
       if(!this.$v.$invalid){

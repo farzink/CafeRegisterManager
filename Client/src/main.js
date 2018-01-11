@@ -6,7 +6,7 @@ import VueAxios from 'vue-axios'
 import BootstrapVue from 'bootstrap-vue'
 import Toasted from 'vue-toasted'
 import Vuelidate from 'vuelidate'
-import BlockUI from 'vue-blockui' 
+import BlockUI from 'vue-blockui'
 
 
 //import 'popper.js/dist/popper.js'
@@ -32,8 +32,10 @@ import authInspector from '@/plugins/authInspector'
 import LSManager from '@/plugins/LSManager'
 import globalConfiguration from '@/plugins/globalConfiguration'
 import * as VueGoogleMaps from 'vue2-google-maps'
+import datacontext from '../src/data/datacontext'
 
-Vue.use(LSManager)
+
+Vue.use(LSManager, datacontext)
 Vue.use(BlockUI)
 Vue.use(VueAxios, axios)
 Vue.use(Vuelidate)
