@@ -19,9 +19,9 @@
           </div>  
         </div>
     </div>
-    <div class="row" v-else>
+    <div class="row m-4" v-else>
       <span>
-          There are no items yet! Start by adding 
+          There are no items yet! Start by adding &nbsp;
       </span>
       <router-link class="btn btn-sm btn-primary" :to="'/manage/products/add'">
           a new Item
@@ -138,6 +138,12 @@ export default {
     doEditItem() {
       this.isLoading = true;
       var self = this;
+      if (this.selectedCategory !== null) {
+        this.product.categoryId = this.selectedCategory;
+      } else {
+        this.$toasted.show("You need to select a category");
+        return;
+      }
       this.axios.defaults.headers.common["Authorization"] = this.$auth.FAH();
       var path = this.$gc.getBaseUrl("items/" + this.product.id);
       this.axios
@@ -153,6 +159,7 @@ export default {
           self.$toasted.show("Item successfully Updated.");
           self.$refs.editModal.hide();
           self.isLoading = false;
+          // todo products should be updated
         })
         .catch(function(error) {
           console.log(error);

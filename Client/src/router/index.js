@@ -11,6 +11,7 @@ import Products from "@/components/Products";
 import Profile from "@/components/Profile";
 import Search from "@/components/Search";
 import IndexCategory from "@/components/Category/Index";
+import IndexOrder from "@/components/Order/order";
 
 Vue.use(Router);
 
@@ -83,6 +84,14 @@ let router = new Router({
       path: "/category",
       name: "Categories",
       component: IndexCategory,
+      meta: {
+        requiresAuth: true
+      }
+    },    
+    {
+      path: "/order",
+      name: "Orders",
+      component: IndexOrder,
       meta: {
         requiresAuth: true
       }
