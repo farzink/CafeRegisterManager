@@ -4,13 +4,24 @@
       <div class="order">      
         <div class="category border">
           <div class="cat-container">
-            <div class="cat-row" v-for="(cat, index) in $lsm.get(categories)" :key="index">
-                <input type="button" class="btn btn-info" :value="cat.name" @click="filterByCategory(cat)">
+            <div class="cat-row" v-for="(cat, index) in getLSMCategories()" :key="index">
+                <input type="button" class="btn" :value="cat.name" :style="{backgroundColor: cat.color}" @click="filterByCategory(cat)">
             </div>            
           </div>
         </div>
         <div class="main border">
-            salam
+            <div class="container-fluid">
+              <div class="row">
+                <div v-for="(item, index) in getLSMItems()" :key="index">
+                  <input type="button" class="btn btn-info btn-item" :value="item.name">
+                </div>
+              </div>
+            </div>
+        </div>
+        <div class="recipt border">
+          <span>
+            details go here
+          </span>
         </div>
         <input type="button" @click="p" value="abbas" />
       </div>
@@ -28,12 +39,25 @@ export default {
     };
   },
   methods: {
-    filterByCategory(cat){
-      alert(cat.id)
+    filterByCategory(cat) {
+      this.getLSMItems(cat);
     },
     p() {
       //   console.log(this.$lsm.get(this.categories));
       console.log(this.$lsm.get(this.items).find(e => e.category_id == 26));
+    },
+    getLSMItems(cat = null) {
+      console.log('inside', cat);
+      if (cat === null) {
+        return this.$lsm.get(this.items);
+      } else {
+        console.log('inside else');
+        var a = this.$lsm.get(this.items).filter(e => e.category_id == cat.id);        
+        console.log(a);
+      }
+    },
+    getLSMCategories() {
+      return this.$lsm.get(this.categories);
     },
     getCategories() {
       this.isLoading = true;
@@ -46,6 +70,7 @@ export default {
           //   self.categories = data.data.categories;
           self.$toasted.show("Categories are up to date.");
           self.isLoading = false;
+          self.$forceUpdate();
         })
         .catch(function(error) {
           console.log(error);
@@ -62,6 +87,7 @@ export default {
           self.$lsm.save();
           //   that.products = data.data.items;
           self.isLoading = false;
+          self.$forceUpdate();
         })
         .catch(function(error) {
           console.log(error);
@@ -69,14 +95,15 @@ export default {
         });
     }
   },
-  beforeMount: function() {
+  mounted: function() {
+    console.log("in before");
     this.$lsm.setDbName("ordersDb");
     this.$lsm.load();
 
-    // this.$lsm.clear(this.categories);
-    // this.getCategories();
-    // this.$lsm.clear(this.items);
-    // this.getItems();
+    this.$lsm.clear(this.categories);
+    this.getCategories();
+    this.$lsm.clear(this.items);
+    this.getItems();
 
     //this.$lsm.set({id: 1, name: "c"}, items)
     //this.$lsm.clear(e);
@@ -97,33 +124,47 @@ export default {
 </script>
 <style lang="css" scoped>
 .category {
-  min-height: 100%;  
+  min-height: 100%;
   width: 150px;
   position: fixed;
   top: 56px;
-  left: 0;  
+  left: 0;
   overflow-y: auto;
   overflow-x: hidden;
 }
-.cat-container{
-  position: absolute;  
+.cat-container {
+  position: absolute;
 }
 .cat-row {
   width: 150px;
   margin: 15px;
-
 }
 
 .cat-row input[type="button"] {
   border-radius: 70%;
   width: 110px;
-  height: 110px;;
+  height: 110px;
 }
-.main {  
+.recipt {
+  min-height: 100%;
+  width: 300px;
+  position: fixed;
   top: 56px;
-  min-width: calc(100vw - 150px);
-  margin-left: 150px;  
-  position: absolute;     
+  right: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.btn-item {
+  /* border-radius: 70%; */
+  width: 110px;
+  height: 110px;
+  margin: 1px;
+}
+.main {
+  top: 56px;
+  min-width: calc(100vw - 450px);
+  margin-left: 150px;
+  position: absolute;
 }
 </style>
 

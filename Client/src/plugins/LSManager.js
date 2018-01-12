@@ -2,7 +2,7 @@ var lsm = {
     models: null,
     types: null,
     autoSaveConfig: {
-        auto: true,
+        auto: false,
         interval: 5000
     },
     load() {
@@ -25,8 +25,7 @@ var lsm = {
         }
         if (this.getEntity(type).type === "item") {
             this.db[type] = entities;
-        } else if (this.getEntity(type).type === "list") {
-            console.log(this.db)
+        } else if (this.getEntity(type).type === "list") {            
             if (this.db[type] == null) {
                 this.db[type] = [];
             }
