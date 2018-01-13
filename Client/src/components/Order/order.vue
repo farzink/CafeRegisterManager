@@ -1,3 +1,4 @@
+import { compareLoose } from 'semver';
 <template>
   <div>
       <BlockUI v-if="isLoading" message="Please Wait" :html="html"></BlockUI>
@@ -10,18 +11,34 @@
           </div>
         </div>
         <div class="main border">
-            <div class="container-fluid">
-              <div class="row p-4">
-                Total Price: {{totalPrice}}
+            <div class="container-fluid">              
+              <div class="row p-4 float-right">                
+                <input type="button" @click="resetOrder" class="btn btn-round btn-warning text-light float-right" value="New" />
               </div>
-              <div class="row p-5">
-          <label for="">Search</label>
-          <input ref="searchBox" class="form-control float-right" type="text" @keyup="search()">
-        </div>
+              
               <div class="row p-4">
-                <div v-for="(item, index) in currentItems" :key="index">
-                  <input type="button" class="btn btn-secondary btn-item m-1 " :value="item.name" @click="addToOrder(item)">
+                Order Number: {{orderNo}}
+              </div>
+              <div class="row p-2 form-group border border-left-0 border-right-0">
+                
+                
+          <label class="col-form-label offset-sm-6 col-sm-2 text-right" for="">Search</label>
+            <div class=" col-sm-4">
+          <input ref="searchBox" class="form-control" type="text" @keyup="search()">
+          </div>
+          </div>
+        
+              <div class="row p-4" style="min-height:500px; max-height: 500px">
+                <div v-for="(item, index) in currentItems" :key="index">                  
+                  <input type="button" class="btn btn-secondary btn-item m-1" :style="{backgroundColor: getItemBg(item.category_id, index)}" :value="item.name" @click="addToOrder(item)">
                 </div>
+                <span v-if="currentItems.length < 1">no items</span>
+              </div>
+
+
+
+              <div class="row p-4 float-right border border-warning border-right-0 border-bottom-0">
+                <span style="width: 20rem" class="h4 float-left">Total Price: {{totalPrice}}</span>
               </div>
             </div>
         </div>
@@ -56,12 +73,42 @@ export default {
       items: this.$lsm.models.ITEMS,
       currentItems: [],
       orders: [],
-      totalPrice: 0
+      totalPrice: 0,
+      orderNo: ""
     };
   },
   methods: {
-    search(e){      
-      this.currentItems = this.$lsm.get(this.items).filter(e=> e.code.includes(this.$refs.searchBox.value) || e.name.includes(this.$refs.searchBox.value)); 
+    getItemBg(categoryId, index){
+      var i = this.$lsm.get(this.categories).find(e=> e.id == categoryId).color;
+      var color = i.split("#")[1];
+      var finalColor ="";
+      if(color.length == 3){
+        var vc = parseInt(color[2], 16);
+        finalColor = color[0] + color[1] + (vc+ index * 5).toString(16);
+      }
+      else{
+        var vc = parseInt(color[4] + color[5] , 16);                
+        finalColor = color[0] + color[1] + color[2] + color[3] + (vc + index * 5).toString(16);
+      }    
+      // var c = parseInt(color, 16);
+      // var b= (c + (index * 5)).toString(16);
+      
+      return "#" + finalColor;
+    },
+    resetOrder(){
+      this.orderNo = Date.now().toString(36).toUpperCase();
+      this.orders= [];
+      this.totalPrice = 0;
+    },
+    search(e){
+      if(this.$refs.searchBox.value != "")
+      {   
+      this.currentItems = this.$lsm.get(this.items).filter(e=> e.code.toLowerCase().includes(this.$refs.searchBox.value.toLowerCase()) || 
+      e.name.toLowerCase().includes(this.$refs.searchBox.value.toLowerCase())); 
+      }
+      else{
+        this.currentItems=[];
+      }
     },
     increaseQuantity(order, quantity){      
       order.quantity+= + quantity;  
@@ -158,6 +205,9 @@ export default {
     this.getCategories();
     this.$lsm.clear(this.items);
     this.getItems();
+
+    if(this.orderNo == "")
+     this.orderNo = Date.now().toString(36).toUpperCase();
 
     //this.$lsm.set({id: 1, name: "c"}, items)
     //this.$lsm.clear(e);
