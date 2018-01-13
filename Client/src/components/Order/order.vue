@@ -5,25 +5,43 @@
         <div class="category border">
           <div class="cat-container">
             <div class="cat-row" v-for="(cat, index) in getLSMCategories()" :key="index">
-                <input type="button" class="btn" :value="cat.name" :style="{backgroundColor: cat.color}" @click="filterByCategory(cat)">
+                <input type="button" class="btn" :value="cat.name" :style="{backgroundColor: cat.color}" @click="filterByCategory(cat.id)">
             </div>            
           </div>
         </div>
         <div class="main border">
             <div class="container-fluid">
-              <div class="row">
-                <div v-for="(item, index) in getLSMItems()" :key="index">
-                  <input type="button" class="btn btn-info btn-item" :value="item.name">
+              <div class="row p-4">
+                Total Price: {{totalPrice}}
+              </div>
+              <div class="row p-5">
+          <label for="">Search</label>
+          <input ref="searchBox" class="form-control float-right" type="text" @keyup="search()">
+        </div>
+              <div class="row p-4">
+                <div v-for="(item, index) in currentItems" :key="index">
+                  <input type="button" class="btn btn-secondary btn-item m-1 " :value="item.name" @click="addToOrder(item)">
                 </div>
               </div>
             </div>
         </div>
-        <div class="recipt border">
-          <span>
-            details go here
-          </span>
+        
+        <div class="recipt border p-4">
+          
+            <div class="list-group m-2" v-for="(order, index) in orders" :key="index">
+                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                   <h5 class="mb-1" >{{order.item.name}}</h5>
+                   <small class="h5" >x{{order.quantity}}</small>
+                   </div>
+                   <a @click="increaseQuantity(order, 1)" class="btn btn-success float-right text-light m-1 fa fa-plus"></a>
+                   <a @click="increaseQuantity(order, -1)" class="btn btn-danger float-right text-light m-1 fa fa-minus"></a>
+                   <br>
+                  <small class="h5 text-muted">${{order.price}}</small>
+              </a>
+          
         </div>
-        <input type="button" @click="p" value="abbas" />
+        </div>
       </div>
   </div>
 </template>
@@ -35,16 +53,52 @@ export default {
       isLoading: false,
       html: '<img src="static/puff.svg" />',
       categories: this.$lsm.models.CATEGORIES,
-      items: this.$lsm.models.ITEMS
+      items: this.$lsm.models.ITEMS,
+      currentItems: [],
+      orders: [],
+      totalPrice: 0
     };
   },
   methods: {
+    search(e){      
+      this.currentItems = this.$lsm.get(this.items).filter(e=> e.code.includes(this.$refs.searchBox.value) || e.name.includes(this.$refs.searchBox.value)); 
+    },
+    increaseQuantity(order, quantity){      
+      order.quantity+= + quantity;  
+      order.price = order.quantity * order.item.price;    
+      if(order.quantity < 1){
+        var i = this.orders.find(e=> e.item.id == order.item.id);
+        console.log(i);
+        this.orders.splice(this.orders.indexOf(i), 1);
+      }
+      
+        this.totalPrice += quantity * order.item.price;
+      
+    },    
+    addToOrder(order){
+      
+      var i = this.orders.find(e=> e.item.id == order.id);      
+      console.log(i);
+      if(i != null){
+        this.increaseQuantity(i, 1);
+      }
+      else
+      {
+      this.orders.push({quantity:1,
+      price: order.price,
+        item:order
+        });
+        this.totalPrice += order.price;
+      }
+      
+    },
     filterByCategory(cat) {
-      this.getLSMItems(cat);
+      this.$refs.searchBox.value = "";
+      this.currentItems = this.$lsm.get(this.items).filter(e=> e.category_id == cat);
     },
     p() {
       //   console.log(this.$lsm.get(this.categories));
-      console.log(this.$lsm.get(this.items).find(e => e.category_id == 26));
+      console.log(this.$lsm.get(this.items));
     },
     getLSMItems(cat = null) {
       console.log('inside', cat);
