@@ -1,77 +1,69 @@
+
 <template>
-   <div class="row justify-content-center parent">
-			<div class="card m-5 p-2 subparent" style="width: 60rem;">
-        <div class="card-body">
-          <h4 class="card-title">Add New Product</h4>
-          <h6 class="card-subtitle mb-4 text-muted ">please enter your product details below</h6>
-            <form>
-              <div class="form-group row">
-                <label for="inputEmail3" class="col-sm-3 col-form-label">Name</label>
-                <div class="col-sm-8">
-                  <input class="form-control" id="inputEmail3" placeholder="Name" v-model="name" @input="$v.name.$touch()">      
-                  <span class="text-danger" v-if="!$v.name.required && $v.name.$dirty">name is required</span>
-                  <span class="text-danger" v-if="!$v.name.maxLength">name can not be longer than 40 characters</span>
-                </div>    
-              </div>
-              <div class="form-group has-danger">
-                <label class="form-control-label" for="inputDanger1">Input with danger</label>
-                <input type="text" class="form-control form-control-danger" id="inputDanger1">
-                <div class="form-control-feedback">Sorry, that username's taken. Try another?</div>
-                <small class="form-text text-muted">Example help text that remains unchanged.</small>
-              </div>
-
-              <div class="form-group row">
-                <label for="inputEmail3" class="col-sm-3 col-form-label">Price</label>
-                <div class="col-sm-8">
-                  <input class="form-control" id="inputEmail3" placeholder="Name" v-model="price" @input="$v.price.$touch()">      
-                  <span class="text-danger" v-if="!$v.price.required && $v.price.$dirty">price is required</span>      
-                  <span class="text-danger" v-if="!$v.price.between">price should be between 0 and 99999999</span>     
-                </div>    
-              </div>
-
-              <div class="form-group row">
-                <label for="inputPassword3" class="col-sm-3 col-form-label">Condition</label>
-                <div class="col-sm-8">
-                  <div class="btn-group" role="group" aria-label="Basic example">
-                    <button type="button" class="btn" v-bind:class="[ isNew ? 'btn-success' : 'btn-secondary'  ]"  @click="conditioner('new')">New</button>
-                    <button type="button" class="btn" v-bind:class="[ isUsed ? 'btn-success' : 'btn-secondary' ]" @click="conditioner('used')">Used</button>  
-                  </div>
-                </div>
-              </div> 
-
-              <div class="form-group row">
-                <label for="inputEmail3" class="col-sm-3 col-form-label">Category</label>
-                <div class="col-sm-8">                  
-                  <b-form-group id="category"                                
-                                label-for="exampleInput3">
-                    <b-form-select id="exampleInput3"
-                                  :options="categoriesOptions"
-                                  required
-                                  v-model="selectedCategory">
-                    </b-form-select>
-                  </b-form-group>
-                </div>    
-              </div>               
-
-
-              <div class="form-group row">
-                <label for="inputEmail3" class="col-sm-3 col-form-label">Description</label>
-                <div class="col-sm-8">
-                  <textarea class="form-control" cols=10 rows=10 id="inputEmail3" placeholder="Description" v-model="description" @input="$v.description.$touch()"></textarea>      
-                  <span class="text-danger" v-if="!$v.description.required && $v.description.$dirty">description is required</span>
-                  <span class="text-danger" v-if="!$v.description.maxLength">description can not be longer than 500 characters</span>
-                      </div>    
-              </div>             
-              
-              <div class="form-group row">
-                <div class="col-sm-12 offset-md-9 col-md-3">
-                  <router-link class="btn btn-danger m-3shop" v-if="!addressStatus" style="position:absolute; top:10px; right: 10px; color: white" :to="'/profile'">You need to add your address to add product</router-link>      
-                  <button class="btn btn-primary"  style="width: 8rem" v-if="addressStatus"  @click="add" v-bind:class="{disabled: $v.$invalid}">Add</button>
-                </div>         
-              </div>                
-              <router-link class="btn btn-danger btn-round fa fa-close" style="position:absolute; top:10px; right: 10px; color: white" :to="'/manage/products'"></router-link>      
-            </form>  
+  <div>
+      <BlockUI v-if="isLoading" message="Please Wait" :html="html"></BlockUI>
+      <div class="row order">      
+        <div class="category border">
+          <div class="cat-container">
+            <div class="cat-row" v-for="(cat, index) in getLSMCategories()" :key="index">
+                <input type="button" class="btn" :value="cat.name" :style="{backgroundColor: cat.color}" @click="filterByCategory(cat.id)">
+            </div>            
           </div>
-		  </div>
-  </div> 
+        </div>
+        <div class="main border">
+            <div class="container-fluid">              
+              <div class="row p-4 float-right">                
+                <input type="button" @click="resetOrder" class="btn btn-round btn-warning text-light float-right" value="New" />
+              </div>
+              
+              <div class="row p-4">
+                Order Number: {{orderNo}}
+              </div>
+              <div class="row p-2 form-group border border-left-0 border-right-0">
+                
+                
+          <label class="col-form-label offset-sm-6 col-sm-2 text-right" for="">Search</label>
+            <div class="col-sm-4">
+          <input ref="searchBox" class="form-control" type="text" @keyup="search()">
+          </div>
+          </div>
+        
+              <div class="row p-4" style="min-height:500px; max-height: 500px">
+                <div class="div-item col-md-2" v-for="(item, index) in currentItems" :key="index">                  
+                  <!-- <input type="button" class="btn btn-secondary btn-item m-1" :style="{backgroundColor: getItemBg(item.category_id, index)}" :value="item.name" @click="addToOrder(item)">
+                  <a href="#" class="badge badge-light">{{item.code}}</a> -->
+                  <button type="button" class="btn btn-secondary btn-item m-1" :style="{backgroundColor: getItemBg(item.category_id, index)}" @click="addToOrder(item)">
+                    {{item.name}}                    
+                  </button>
+                  <!-- <span style="top:10px; left:10px; position: absolute;min-width: 64px; max-width: 64px;" href="#" class="badge badge-secondary">{{item.code}}</span> -->
+                </div>
+                <span v-if="currentItems.length < 1">no items</span>
+              </div>
+
+
+
+              <div class="row p-4 float-right border border-warning border-right-0 border-bottom-0">
+                <span style="width: 20rem" class="h4 float-left">Total Price: {{totalPrice | currency}}</span>
+              </div>
+            </div>
+        </div>
+        
+        <div class="recipt border p-4">          
+            <div class="list-group m-2" v-for="(order, index) in orders" :key="index">
+                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                   <h5 class="mb-1" >{{order.item.name}}</h5>
+                   <small class="h5" >x{{order.quantity}}</small>
+                   </div>
+                   <a @click="increaseQuantity(order, 1)" class="btn btn-success float-right text-light m-1 fa fa-plus"></a>
+                   <a @click="increaseQuantity(order, -1)" class="btn btn-danger float-right text-light m-1 fa fa-minus"></a>
+                   <br>
+                  <small class="h5 text-muted">${{order.price}}</small>
+                </a>            
+            </div>
+        </div>
+      </div>
+  </div>
 </template>
+
+

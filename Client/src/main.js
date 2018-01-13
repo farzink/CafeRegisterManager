@@ -7,6 +7,7 @@ import BootstrapVue from 'bootstrap-vue'
 import Toasted from 'vue-toasted'
 import Vuelidate from 'vuelidate'
 import BlockUI from 'vue-blockui'
+import VueCurrencyFilter from 'vue-currency-filter'
 
 
 //import 'popper.js/dist/popper.js'
@@ -35,6 +36,14 @@ import * as VueGoogleMaps from 'vue2-google-maps'
 import datacontext from '../src/data/datacontext'
 
 
+Vue.use(VueCurrencyFilter, {
+    symbol : '$', 
+    thousandsSeparator: '.',
+    fractionCount: 2,
+    fractionSeparator: ',',
+    symbolPosition: 'front',
+    symbolSpacing: true
+})
 Vue.use(LSManager, datacontext)
 Vue.use(BlockUI)
 Vue.use(VueAxios, axios)
