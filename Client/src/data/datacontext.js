@@ -1,12 +1,14 @@
 const CATEGORIES = "categories";
 const ITEMS = "items";
 const PROFILE = "profile";
+const CUSTOMER = "customer";
 
 export default {
   entities: {
     CATEGORIES,
     ITEMS,
-    PROFILE
+    PROFILE,
+    CUSTOMER
   },
   schema: [
     {
@@ -20,6 +22,10 @@ export default {
     {
       name: PROFILE,
       type: "item"
+    },
+    {
+      name: CUSTOMER,
+      type: "list"
     }
   ]
 };
